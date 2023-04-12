@@ -16,7 +16,7 @@ You can select and scan wifi connections.
 
 ### How to install
 ```
-https://github.com/DRAGONTOS/netsel-dmenu.git
+git clone https://github.com/DRAGONTOS/netsel-dmenu.git
 bash setup.bash
 ```
 ## Version History
