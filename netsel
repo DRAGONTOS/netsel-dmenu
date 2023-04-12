@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+## TITLE: Netsel
+## DESCRIPTION: A Wifi netselection program using dmenu.
+
+## Var
+term="st -e"
+## term = The terminal you use.
+sd="doas"
+## sd = The root thingie eg (sudo & doas).
+interface="wlan0"
+## interface = The wifi interface you use (check this with the command [ip a]).
+
+case "$(printf ">>WIFIScan<<\nHomeWIFI\nCoffeShopWIFI\nWorkWIFI\n>>killwpa<<" | dmenu -l 20 -i)" in
+## Format is this [NETWORKNAME\nOTHERNETWORKNAME] ([\n] is for new line. and at the end don't use [\n] because it doesn't need a new line.)
+	'>>WIFIScan<<') $term $sd wavemon ;;
+	## This scans for wifi connections. [wavemon] is a application that makes it possible to scan for wifi connections in a ncurses tui, to check for wifi connection press [f5].
+	'HomeWIFI') $term $sd rfkill unblock all && $term $sd wpa_supplicant -B -i $interface -c /etc/wpa_supplicant/HomeWIFI.conf && $term $sd dhcpcd $interface ;;
+	## The NEWORKNAME is set here and you should make a conf file in [/etc/wpa_supplicant/NETWORKNAME.conf] and edit the [NETWORKNAME.conf] (a skel file is (WIFISkel.conf) )
+	'CoffeShopWIFI') $term $sd rfkill unblock all && $term $sd wpa_supplicant -B -i $interface -c /etc/wpa_supplicant/CoffeShopWIFI.conf && $term $sd dhcpcd $interface ;;
+	'WorkWIFI') $term $sd rfkill unblock all && $term $sd wpa_supplicant -B -i $interface -c /etc/wpa_supplicant/WorkWIFI.conf && $term $sd dhcpcd $interface ;;
+	'>>killwpa<<') $term $sd killall wpa_supplicant ;;
+	## This kills the [wpa_supplicant] to reset configurations, and then you can re run the program to connect to a new wifi.
+
+	*) exit 1 ;;
+esac
